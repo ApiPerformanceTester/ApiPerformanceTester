@@ -52,18 +52,19 @@ export class SshConnection {
     return this.ssh.putFile(requirementFilePath, `/home/ubuntu/loadtesting/loadTesting.sh`);
   }
 
-  startLoadTesting(loadTestingScriptPath: PathLike, scriptFileName: String) {
+  async startLoadTesting(loadTestingScriptPath: PathLike, scriptFileName: String) {
+    await this.executeCommand();
     return this.ssh.execCommand(
       `cd ${loadTestingScriptPath} && artillery run --output ${this.host}.report.json ${scriptFileName} >> ${this.host}.artillery.log.log`,
     );
   }
-  private executeComment() {
+  private executeCommand() {
     return this.ssh.execCommand('cd loadtesting  && chmod +x loadTesting.sh && ./loadTesting.sh');
   }
-  private getFile() {
+  private getFile(type: String) {
     return this.ssh.getFile(
       `${__dirname}/${this.host}.report.json`,
-      `/home/ubuntu/loadtesting/loadtestingfiles/${this.host}.report.json`,
+      `/home/ubuntu/loadtesting/loadtestingfiles/${this.host}.${type}.json`,
     );
   }
 }
