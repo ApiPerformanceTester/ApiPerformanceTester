@@ -1,16 +1,16 @@
 import { NodeSSH } from 'node-ssh';
 import { readFileSync, PathLike, fstat } from 'fs';
-const path = require('path');
+import * as path from 'path';
 
 export type EC2Connection = {
-  host: String;
-  username: String;
+  host: string;
+  username: string;
   privateKeyPath: PathLike;
 };
 
 export class SshConnection {
-  host: String;
-  username: String;
+  host: any;
+  username: any;
   privateKeyPath: PathLike;
   ssh: NodeSSH = new NodeSSH();
 
@@ -52,7 +52,7 @@ export class SshConnection {
     return this.ssh.putFile(requirementFilePath, `/home/ubuntu/loadtesting/loadTesting.sh`);
   }
 
-  async startLoadTesting(loadTestingScriptPath: PathLike, scriptFileName: String) {
+  async startLoadTesting(loadTestingScriptPath: PathLike, scriptFileName: string) {
     await this.executeCommand();
     return this.ssh.execCommand(
       `cd ${loadTestingScriptPath} && artillery run --output ${this.host}.report.json ${scriptFileName} >> ${this.host}.artillery.log.log`,
@@ -61,7 +61,7 @@ export class SshConnection {
   private executeCommand() {
     return this.ssh.execCommand('cd loadtesting  && chmod +x loadTesting.sh && ./loadTesting.sh');
   }
-  private getFile(type: String) {
+  private getFile(type: string) {
     return this.ssh.getFile(
       `${__dirname}/${this.host}.report.json`,
       `/home/ubuntu/loadtesting/loadtestingfiles/${this.host}.${type}.json`,
